@@ -22,16 +22,14 @@ config = {
         'name': 'streamlit_auth',
         'key': os.getenv('STREAMLIT_COOKIE_KEY'),
         'expiry_days': 30
-    },
-    'preauthorized': {}
+    }
 }
 
 authenticator = stauth.Authenticate(
     config['credentials'],
     config['cookie']['name'],
     config['cookie']['key'],
-    config['cookie']['expiry_days'],
-    config['preauthorized']
+    config['cookie']['expiry_days']
 )
 
 name, authentication_status, username = authenticator.login('Login', 'main')
