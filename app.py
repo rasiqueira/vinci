@@ -178,7 +178,7 @@ if check_password():
     output = BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         filtered_df.to_excel(writer, index=False)
-        writer.save()
+#        writer.save()
         processed_data = output.getvalue()
 
     st.sidebar.download_button(
