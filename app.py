@@ -7,6 +7,8 @@ import yaml
 from yaml.loader import SafeLoader
 import os
 
+# Authentication setup
+
 def check_password():
     """Returns `True` if the user had a correct password."""
 
@@ -32,7 +34,6 @@ def check_password():
         st.text_input(
             "Password", type="password", on_change=password_entered, key="password"
         )
-
 
         st.error("😕 User not known or password incorrect")
         return False
@@ -186,5 +187,3 @@ if check_password():
         file_name='dados_filtrados.xlsx',
         mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
-
-    
