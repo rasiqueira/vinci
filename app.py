@@ -3,38 +3,44 @@ import pandas as pd
 import plotly.express as px
 import re
 from io import BytesIO
-import streamlit_authenticator as stauth
 import yaml
 from yaml.loader import SafeLoader
 import os
 
-# Authentication setup for Streamlit Cloud
-config = {
-    'credentials': {
-        'usernames': {
-            os.getenv('STREAMLIT_USER'): {
-                'name': os.getenv('STREAMLIT_NAME'),
-                'password': os.getenv('STREAMLIT_PASSWORD')
-            }
-        }
-    },
-    'cookie': {
-        'name': 'streamlit_auth',
-        'key': os.getenv('STREAMLIT_COOKIE_KEY'),
-        'expiry_days': 30
-    }
-}
+def check_password():
+    """Returns `True` if the user had a correct password."""
 
-authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days']
-)
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if st.session_state["username"] == st.secrets["passwords"]['username'] and st.session_state["password"] == st.secrets["passwords"]["password"]:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # don't store username + password
+            del st.session_state["username"]
+        else:
+            st.session_state["password_correct"] = False
 
-name, authentication_status, username = authenticator.login('Login', 'main')
+    if "password_correct" not in st.session_state:
+        # First run, show inputs for username + password.
+        st.text_input("Username", on_change=password_entered, key="username")
+        st.text_input(
+            "Password", type="password", on_change=password_entered, key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password not correct, show input + error.
+        st.text_input("Username", on_change=password_entered, key="username")
+        st.text_input(
+            "Password", type="password", on_change=password_entered, key="password"
+        )
 
-if authentication_status:
+
+        st.error("😕 User not known or password incorrect")
+        return False
+    else:
+        # Password correct.
+        return True
+
+if check_password():
     # Load the cleaned dataset
     def load_data():
         # Load the full dataset to clean the date formats
